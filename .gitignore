@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Environment secrets - NEVER commit
+.env
+.env.*
+!.env.example
+
+# Supabase CLI runtime files
+supabase/.temp/
+
+# Raw source files (processed into Markdown; not uploaded to bucket)
+supabase/storage/website_assistant_knowledge/_raw/
+
+# Downloaded image cache (one-off; images already live in Supabase storage)
+downloaded_images/
+
+# Windows filesystem artifacts
+desktop.ini
+Thumbs.db
+
+# macOS artifacts
+.DS_Store
+
+# Editor
+.vscode/
+*.code-workspace

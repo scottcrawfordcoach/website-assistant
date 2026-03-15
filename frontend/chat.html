@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat with Coach Scott Bot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: #007BFF;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .info-section {
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .info-card h2 {
+            font-size: 18px;
+            color: #007BFF;
+            margin-bottom: 12px;
+        }
+
+        .info-card h3 {
+            font-size: 16px;
+            color: #333;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        .info-card ul {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .info-card li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .info-card p {
+            line-height: 1.6;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        .disclaimer {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 4px;
+        }
+
+        .disclaimer p {
+            color: #856404;
+            font-size: 13px;
+            margin: 0;
+        }
+
+        #chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 18px 18px 0 18px;
+        }
+
+        .message.assistant {
+            align-self: flex-start;
+            background-color: #e9e9eb;
+            color: black;
+            border-radius: 18px 18px 18px 0;
+        }
+
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 12px;
+            background: white;
+        }
+
+        #chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 24px;
+            outline: none;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        #chat-input:focus {
+            border-color: #007BFF;
+        }
+
+        .send-button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 24px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            transition: background-color 0.2s;
+        }
+
+        .send-button:hover {
+            background-color: #0056b3;
+        }
+
+        .send-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            align-self: flex-start;
+            color: #888;
+            font-size: 13px;
+            font-style: italic;
+            margin-left: 10px;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 968px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .info-section {
+                width: 100%;
+                order: 2;
+            }
+
+            .chat-section {
+                order: 1;
+                min-height: 500px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .container {
+                padding: 12px;
+            }
+
+            .info-card {
+                padding: 16px;
+            }
+
+            .message {
+                max-width: 85%;
+            }
+
+            #chat-box {
+                padding: 16px;
+            }
+
+            .input-area {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 Coach Scott Bot</h1>
+        <p>Your AI assistant for wellness, fitness, and nutrition questions</p>
+    </div>
+
+    <div class="container">
+        <div class="chat-section">
+            <div id="chat-box">
+                <div class="message assistant">
+                    Hi! I'm Coach Scott's AI assistant. Ask me anything about my services, wellness, fitness, or nutrition!
+                </div>
+            </div>
+
+            <div class="input-area">
+                <input id="chat-input" type="text" placeholder="Type your message..." />
+                <button class="send-button" onclick="sendMsg()">Send</button>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-card">
+                <h2>💬 How to Use This Assistant</h2>
+                <p>This AI assistant can help you with:</p>
+                <ul>
+                    <li><strong>Service Information</strong> – Learn about coaching packages, class schedules, and pricing</li>
+                    <li><strong>Wellness Advice</strong> – Get guidance on fitness, nutrition, and healthy living</li>
+                    <li><strong>Class Availability</strong> – Check current class times and enrollment status</li>
+                    <li><strong>General Questions</strong> – Ask about Coach Scott's approach and philosophy</li>
+                </ul>
+                
+                <h3>Tips for Best Results:</h3>
+                <ul>
+                    <li>Be specific with your questions</li>
+                    <li>Ask one question at a time</li>
+                    <li>Your conversation history is saved locally</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h2>⚠️ Important Disclaimer</h2>
+                <p><strong>This is an AI assistant and not a substitute for professional advice.</strong></p>
+                
+                <div class="disclaimer">
+                    <p><strong>Please note:</strong> While this assistant is trained on Coach Scott's knowledge and services, responses are AI-generated and may occasionally contain errors. Always verify important information directly with Coach Scott, especially regarding:</p>
+                </div>
+                
+                <ul style="margin-top: 12px;">
+                    <li>Medical conditions or health concerns</li>
+                    <li>Specific dietary restrictions or allergies</li>
+                    <li>Booking confirmations and payments</li>
+                    <li>Emergency or urgent matters</li>
+                </ul>
+                
+                <p style="margin-top: 12px;"><strong>For personalized advice, book a consultation with Coach Scott directly.</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const FUNCTION_URL = 'https://yxndmpwqvdatkujcukdv.supabase.co/functions/v1/faq-bot';
+        const STORAGE_KEY = 'coach_scott_chat_history';
+        const MAX_HISTORY = 20;
+
+        // Load history on startup
+        window.addEventListener('DOMContentLoaded', () => {
+            loadHistory();
+            document.getElementById('chat-input').focus();
+        });
+
+        // Enter key to send
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMsg();
+            }
+        });
+
+        function loadHistory() {
+            const chatBox = document.getElementById('chat-box');
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                const history = JSON.parse(stored);
+                if (history.length > 0) {
+                    chatBox.innerHTML = '';
+                    history.forEach(msg => appendMessageToUI(msg.content, msg.role));
+                }
+            }
+        }
+
+        async function sendMsg() {
+            const chatInput = document.getElementById('chat-input');
+            const chatBox = document.getElementById('chat-box');
+            const sendButton = document.querySelector('.send-button');
+            const text = chatInput.value.trim();
+            
+            if (!text) return;
+
+            // Update UI & Local Storage
+            appendMessageToUI(text, 'user');
+            saveMessage(text, 'user');
+            
+            chatInput.value = '';
+            chatInput.disabled = true;
+            sendButton.disabled = true;
+
+            // Show typing indicator
+            const loadingId = 'loading-' + Date.now();
+            const typingDiv = document.createElement('div');
+            typingDiv.id = loadingId;
+            typingDiv.className = 'typing-indicator';
+            typingDiv.textContent = 'Coach Scott Bot is typing...';
+            chatBox.appendChild(typingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                const messages = history.slice(-MAX_HISTORY);
+
+                const res = await fetch(FUNCTION_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messages })
+                });
+
+                const data = await res.json();
+                
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) loadingEl.remove();
+
+                if (data.reply) {
+                    appendMessageToUI(data.reply, 'assistant');
+                    saveMessage(data.reply, 'assistant');
+                } else {
+                    appendMessageToUI("Sorry, I couldn't get a response.", 'assistant');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) loadingEl.remove();
+                appendMessageToUI("Sorry, something went wrong.", 'assistant');
+            } finally {
+                chatInput.disabled = false;
+                sendButton.disabled = false;
+                chatInput.focus();
+            }
+        }
+
+        function saveMessage(content, role) {
+            const history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            history.push({ role, content });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+        }
+
+        function appendMessageToUI(text, sender) {
+            const chatBox = document.getElementById('chat-box');
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            div.textContent = text;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
