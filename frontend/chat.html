@@ -47,24 +47,15 @@
 
         .container {
             display: flex;
-            gap: 20px;
             align-items: stretch;
             min-height: calc(100vh - 150px);
         }
 
         .chat-column {
-            flex: 1;
+            width: 100%;
             display: flex;
             flex-direction: column;
             min-width: 0;
-        }
-
-        .info-column {
-            width: 350px;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
         }
 
         .chat-section {
@@ -227,58 +218,6 @@
             color: white;
         }
 
-        .info-card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-        }
-
-        .info-card h2 {
-            font-size: 18px;
-            color: #007BFF;
-            margin-bottom: 12px;
-        }
-
-        .info-card h3 {
-            font-size: 16px;
-            color: #333;
-            margin-top: 16px;
-            margin-bottom: 8px;
-        }
-
-        .info-card ul {
-            margin-left: 20px;
-            margin-bottom: 12px;
-        }
-
-        .info-card li {
-            margin-bottom: 8px;
-            line-height: 1.5;
-            font-size: 14px;
-            color: #555;
-        }
-
-        .info-card p {
-            line-height: 1.6;
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 12px;
-        }
-
-        .disclaimer {
-            background-color: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 12px;
-            margin-top: 12px;
-            border-radius: 4px;
-        }
-
-        .disclaimer p {
-            color: #856404;
-            font-size: 13px;
-            margin: 0;
-        }
 
         #chat-box {
             flex: 1;
@@ -385,17 +324,7 @@
             }
 
             .container {
-                flex-direction: column;
                 min-height: auto;
-            }
-
-            .info-column {
-                width: 100%;
-                order: 2;
-            }
-
-            .chat-column {
-                order: 1;
             }
 
             .chat-section {
@@ -414,10 +343,6 @@
 
             .page-header p {
                 font-size: 13px;
-            }
-
-            .info-card {
-                padding: 16px;
             }
 
             .message {
@@ -528,43 +453,6 @@
                 </div>
             </div>
 
-            <div class="info-column">
-                <div class="info-card">
-                    <h2>💬 How to Use This Assistant</h2>
-                    <p>This AI assistant can help you with:</p>
-                    <ul>
-                        <li><strong>Service Information</strong> – Learn about coaching packages, class schedules, and pricing</li>
-                        <li><strong>Wellness Advice</strong> – Get guidance on fitness, nutrition, movement, and healthy living</li>
-                        <li><strong>Class Availability</strong> – Check current class times and enrollment status</li>
-                        <li><strong>Workout Generator</strong> – Ask what a movement means or how to time it</li>
-                    </ul>
-                    
-                    <h3>Tips for Best Results:</h3>
-                    <ul>
-                        <li>Be specific with your questions</li>
-                        <li>Ask one question at a time</li>
-                        <li>Your conversation history is saved locally on this device</li>
-                    </ul>
-                </div>
-
-                <div class="info-card">
-                    <h2>⚠️ Important Disclaimer</h2>
-                    <p><strong>This is an AI assistant and not a substitute for professional advice.</strong></p>
-                    
-                    <div class="disclaimer">
-                        <p><strong>Please note:</strong> While this assistant is trained on Coach Scott's knowledge and services, responses are AI-generated and may occasionally contain errors. Always verify important information directly with Coach Scott, especially regarding:</p>
-                    </div>
-                    
-                    <ul style="margin-top: 12px;">
-                        <li>Medical conditions or health concerns</li>
-                        <li>Specific dietary restrictions or allergies</li>
-                        <li>Booking confirmations and payments</li>
-                        <li>Emergency or urgent matters</li>
-                    </ul>
-                    
-                    <p style="margin-top: 12px;"><strong>For personalized advice, book a consultation with Coach Scott directly.</strong></p>
-                </div>
-            </div>
         </div>
     </div>
 
