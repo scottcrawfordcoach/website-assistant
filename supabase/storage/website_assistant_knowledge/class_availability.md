@@ -4,7 +4,7 @@
 
 | Day | Time | Free spaces |
 |---|---:|---:|
-| Monday | 6:15 AM | 1 |
+| Monday | 6:15 AM | 0 |
 | Monday | 7:30 AM | 1 |
 | Monday | 9:00 AM | 2 |
 | Monday | 4:30 PM | 4 |
@@ -18,7 +18,7 @@
 | Wednesday | 4:30 PM | 4 |
 | Wednesday | 6:30 PM | 4 |
 | Thursday | 6:15 AM | 0 |
-| Thursday | 7:30 AM | 0 |
+| Thursday | 7:30 AM | 1 |
 | Thursday | 9:00 AM | 2 |
 | Friday | 6:15 AM | 0 |
 | Friday | 7:30 AM | 2 |

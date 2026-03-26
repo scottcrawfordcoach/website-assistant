@@ -3,528 +3,453 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chat with Coach Scott</title>
+    <title>Ask Scott — Crawford Coaching</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --ink:               #0e0f10;
+            --slate:             #1c2330;
+            --slate-mid:         #232f3e;
+            --fog:               #3d4a58;
+            --mist:              #7a8fa3;
+            --pale:              #c8d4de;
+            --white:             #f5f3ef;
+            --brand-blue:        #2d86c4;
+            --brand-blue-light:  #4fa3d8;
+            --whole-sage:        #7a9b6d;
+            --serif-display:     'Cormorant Garamond', Georgia, serif;
+            --sans:              'Jost', sans-serif;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(180deg, #2ba5d8 0%, #34a8dd 100%);
-            min-height: 100vh;
-            color: #1f2937;
-        }
-
-        a {
-            color: #007BFF;
-        }
-
-        .page-shell {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 28px 18px 20px;
-        }
-
-        .container {
-            display: flex;
-            align-items: stretch;
-            min-height: calc(100vh - 56px);
-        }
-
-        .chat-column {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-
-        .chat-section {
-            background: white;
-            border-radius: 18px;
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
+        html, body {
             height: 100%;
-            flex: 1;
+            background: var(--ink);
+            color: var(--white);
+            font-family: var(--sans);
+            -webkit-font-smoothing: antialiased;
         }
 
-        .chat-topbar {
-            background: #1677ea;
-            color: white;
-            padding: 14px 16px;
+        /* ─── LAYOUT ─────────────────────── */
+        .chat-shell {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            height: 100vh;
+            max-width: 720px;
+            margin: 0 auto;
+            border-left: 1px solid rgba(255,255,255,0.06);
+            border-right: 1px solid rgba(255,255,255,0.06);
         }
 
-        .chat-topbar-main {
+        /* ─── HEADER ─────────────────────── */
+        .header {
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-
-        .avatar-wrap {
-            width: 58px;
-            height: 58px;
-            border-radius: 999px;
-            overflow: hidden;
-            background: rgba(255,255,255,0.25);
+            gap: 0.9rem;
+            padding: 1rem 1.4rem;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            background: var(--slate);
             flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
-
-        .avatar-wrap img {
+        .header__avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid rgba(45,134,196,0.35);
+        }
+        .header__avatar img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center top;
         }
-
-        .bot-meta {
+        .header__title {
             flex: 1;
             min-width: 0;
         }
-
-        .bot-meta h2 {
-            font-size: 20px;
+        .header__title strong {
+            display: block;
+            font-family: var(--serif-display);
+            font-weight: 400;
+            font-size: 1.3rem;
+            color: var(--white);
             line-height: 1.1;
-            margin-bottom: 3px;
         }
-
-        .bot-meta p {
-            font-size: 12.5px;
-            opacity: 0.92;
-            line-height: 1.35;
+        .header__title span {
+            font-size: 0.68rem;
+            font-weight: 200;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--pale);
         }
-
-        .clear-button {
-            background: rgba(255,255,255,0.14);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.34);
-            border-radius: 999px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: background-color 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .clear-button:hover {
-            background: rgba(255,255,255,0.24);
-        }
-
-        .shortcut-dock {
-            background: white;
-            border-top: 1px solid #e9edf2;
-            padding: 12px 16px 10px;
-            transition: padding 0.2s ease;
-        }
-
-        .shortcut-dock.compact {
-            padding-top: 8px;
-            padding-bottom: 8px;
-        }
-
-        .shortcut-dock-header {
+        .header__actions {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 0.5rem;
         }
-
-        .shortcut-dock.compact .shortcut-dock-header {
-            margin-bottom: 0;
-        }
-
-        .shortcut-dock-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #4b5563;
-            letter-spacing: 0.01em;
-        }
-
-        .shortcut-dock-hint {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .shortcut-toggle {
-            background: #eef4ff;
-            color: #1677ea;
-            border: 1px solid #cfe0ff;
-            border-radius: 999px;
-            padding: 6px 10px;
-            font-size: 12px;
-            font-weight: 600;
+        .btn-sm {
+            background: none;
+            border: 1px solid rgba(122,143,163,0.25);
+            color: var(--mist);
+            font-family: var(--sans);
+            font-size: 0.62rem;
+            font-weight: 300;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            padding: 0.35rem 0.7rem;
             cursor: pointer;
+            border-radius: 1px;
+            transition: color 0.2s, border-color 0.2s;
+            text-decoration: none;
             white-space: nowrap;
         }
+        .btn-sm:hover { color: var(--pale); border-color: rgba(122,143,163,0.5); }
 
-        .shortcut-list {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 10px;
+        /* ─── DISCLAIMER ─────────────────── */
+        .disclaimer {
             overflow: hidden;
-            max-height: 220px;
-            opacity: 1;
-            transition: max-height 0.22s ease, opacity 0.18s ease;
+            max-height: 0;
+            transition: max-height 0.3s ease;
+            flex-shrink: 0;
         }
+        .disclaimer.open { max-height: 200px; }
+        .disclaimer__inner {
+            padding: 1rem 1.4rem;
+            background: var(--slate);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-size: 0.76rem;
+            font-weight: 300;
+            line-height: 1.65;
+            color: var(--mist);
+        }
+        .disclaimer__inner strong { color: var(--pale); font-weight: 400; }
+        .disclaimer__label {
+            font-size: 0.6rem;
+            font-weight: 400;
+            letter-spacing: 0.26em;
+            text-transform: uppercase;
+            color: var(--brand-blue);
+            margin-bottom: 0.5rem;
+        }
+        .disclaimer__inner a { color: var(--brand-blue); }
 
-        .shortcut-dock.compact .shortcut-list {
+        /* ─── SHORTCUTS ──────────────────── */
+        .shortcuts {
+            padding: 0.8rem 1.4rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            flex-shrink: 0;
+            overflow: hidden;
+            max-height: 180px;
+            opacity: 1;
+            transition: max-height 0.22s ease, opacity 0.18s ease, padding 0.2s;
+        }
+        .shortcuts.hidden {
             max-height: 0;
             opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
         }
-
-        .shortcut-list button {
-            background: white;
-            color: #1677ea;
-            border: 1.5px solid #1677ea;
-            padding: 10px 11px;
-            border-radius: 999px;
-            font-size: 13px;
+        .shortcuts__label {
+            font-size: 0.6rem;
+            font-weight: 300;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: var(--mist);
+            margin-bottom: 0.6rem;
+        }
+        .shortcuts__list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+        }
+        .shortcut {
+            font-family: var(--sans);
+            font-size: 0.72rem;
+            font-weight: 300;
+            color: var(--mist);
+            background: none;
+            border: 1px solid rgba(122,143,163,0.2);
+            padding: 0.35rem 0.8rem;
+            border-radius: 1px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
+            transition: color 0.2s, border-color 0.2s, background 0.2s;
+            text-align: left;
             line-height: 1.3;
-            min-height: 42px;
+        }
+        .shortcut:hover {
+            color: var(--white);
+            border-color: rgba(45,134,196,0.5);
+            background: rgba(45,134,196,0.06);
         }
 
-        .shortcut-list button:hover {
-            background: #1677ea;
-            color: white;
-        }
-
-
-        #chat-box {
+        /* ─── CHAT ────────────────────────── */
+        .chat {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
-            background-color: #f4f6f8;
+            padding: 1.2rem 1.4rem;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 0.8rem;
             scroll-behavior: smooth;
+            background: var(--ink);
         }
+        .chat::-webkit-scrollbar { width: 3px; }
+        .chat::-webkit-scrollbar-thumb { background: var(--fog); }
 
-        .message {
-            max-width: min(82%, 760px);
-            padding: 13px 16px;
-            border-radius: 18px;
-            word-wrap: break-word;
-            line-height: 1.45;
-            white-space: normal;
+        .msg {
+            max-width: 82%;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            font-weight: 300;
+            animation: msgIn 0.2s ease;
         }
-
-        .message.user {
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .msg.user {
             align-self: flex-end;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 18px 18px 0 18px;
+            background: var(--brand-blue);
+            color: var(--white);
+            padding: 0.7rem 1rem;
         }
-
-        .message.assistant {
+        .msg.assistant {
             align-self: flex-start;
-            background-color: #e9e9eb;
-            color: black;
-            border-radius: 18px 18px 18px 0;
+            background: var(--slate);
+            color: var(--pale);
+            padding: 0.8rem 1rem;
+            border-left: 2px solid rgba(45,134,196,0.4);
         }
+        .msg.assistant p + p { margin-top: 0.5rem; }
+        .msg.assistant ul { margin: 0.5rem 0 0.5rem 1.2rem; }
+        .msg.assistant li { margin-bottom: 0.3rem; }
+        .msg.assistant strong { color: var(--white); font-weight: 400; }
 
-        .message.assistant ul {
-            margin: 8px 0 8px 18px;
-            padding: 0;
-        }
-
-        .message.assistant li {
-            margin-bottom: 6px;
-        }
-
-        .message.assistant p + p {
-            margin-top: 10px;
-        }
-
-        .input-area {
-            padding: 16px 18px;
-            border-top: 1px solid #eee;
+        .typing {
+            align-self: flex-start;
             display: flex;
-            gap: 12px;
-            background: white;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.7rem 1rem;
+            background: var(--slate);
+            border-left: 2px solid rgba(45,134,196,0.4);
+        }
+        .typing span {
+            width: 5px;
+            height: 5px;
+            background: var(--mist);
+            border-radius: 50%;
+            animation: dot 1.2s infinite;
+        }
+        .typing span:nth-child(2) { animation-delay: 0.2s; }
+        .typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dot {
+            0%,80%,100% { opacity: 0.3; transform: scale(0.8); }
+            40% { opacity: 1; transform: scale(1); }
         }
 
+        /* ─── INPUT ───────────────────────── */
+        .input-area {
+            display: flex;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            flex-shrink: 0;
+        }
         #chat-input {
             flex: 1;
-            padding: 12px 16px;
-            border: 1px solid #ddd;
-            border-radius: 24px;
-            outline: none;
-            font-size: 15px;
-            font-family: inherit;
-        }
-
-        #chat-input:focus {
-            border-color: #007BFF;
-        }
-
-        .send-button {
-            background-color: #007BFF;
-            color: white;
+            background: var(--slate);
             border: none;
-            padding: 12px 28px;
-            border-radius: 24px;
+            color: var(--white);
+            font-family: var(--sans);
+            font-weight: 300;
+            font-size: 0.88rem;
+            padding: 0.85rem 1.2rem;
+            outline: none;
+            border-right: 1px solid rgba(255,255,255,0.06);
+            transition: background 0.2s;
+        }
+        #chat-input::placeholder { color: var(--fog); }
+        #chat-input:focus { background: var(--slate-mid); }
+        .send-btn {
+            background: var(--brand-blue);
+            border: none;
+            color: var(--white);
+            font-family: var(--sans);
+            font-weight: 400;
+            font-size: 0.72rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            padding: 0.85rem 1.4rem;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 15px;
-            transition: background-color 0.2s;
+            transition: background 0.2s;
+            white-space: nowrap;
         }
+        .send-btn:hover { background: var(--brand-blue-light); }
+        .send-btn:disabled { background: var(--fog); cursor: not-allowed; }
 
-        .send-button:hover {
-            background-color: #0056b3;
-        }
-
-        .send-button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        .typing-indicator {
-            align-self: flex-start;
-            color: #888;
-            font-size: 13px;
-            font-style: italic;
-            margin-left: 10px;
-        }
-
-        /* Mobile responsive */
-        @media (max-width: 968px) {
-            .page-shell {
-                padding: 12px 12px 16px;
+        /* ─── RESPONSIVE ──────────────────── */
+        @media (max-width: 480px) {
+            .chat-shell {
+                border-left: none;
+                border-right: none;
             }
-
-            .container {
-                min-height: auto;
-            }
-
-            .chat-section {
-                min-height: calc(100vh - 170px);
-            }
-
-            .shortcut-list {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
-
-        @media (max-width: 640px) {
-            .avatar-wrap {
-                width: 50px;
-                height: 50px;
-            }
-
-            .message {
-                max-width: 90%;
-            }
-
-            #chat-box {
-                padding: 16px;
-            }
-
-            .input-area {
-                padding: 14px;
-                gap: 10px;
-            }
-
-            #chat-input {
-                min-width: 0;
-                font-size: 16px;
-            }
-
-            .send-button {
-                padding: 12px 18px;
-            }
-
-            .shortcut-list {
-                grid-template-columns: 1fr;
-            }
-
-            .chat-topbar {
-                padding: 12px 14px;
-            }
-
-            .chat-topbar-main {
-                align-items: flex-start;
-            }
-
-            .bot-meta h2 {
-                font-size: 18px;
-            }
-
-            .clear-button {
-                padding: 8px 10px;
-            }
-
-            .shortcut-dock {
-                padding: 10px 12px 8px;
-            }
-
-            .shortcut-list button {
-                min-height: 40px;
-                font-size: 12.5px;
-            }
+            .header { padding: 0.8rem 1rem; }
+            .chat { padding: 1rem; }
+            .shortcuts { padding: 0.6rem 1rem; }
         }
     </style>
 </head>
 <body>
-    <div class="page-shell">
-        <div class="container">
-            <div class="chat-column">
-                <div class="chat-section">
-                    <div class="chat-topbar">
-                        <div class="chat-topbar-main">
-                            <div class="avatar-wrap">
-                                <img src="/scott-logo.png" alt="Coach Scott">
-                            </div>
-                            <div class="bot-meta">
-                                <h2>Coach Scott Bot</h2>
-                                <p>Use this assistant to find out more about my services, holidays and closures, exercise or nutrition help, or wellness in general</p>
-                            </div>
-                            <button class="clear-button" type="button" onclick="clearHistory()">Clear</button>
-                        </div>
-                    </div>
-
-                    <div id="chat-box">
-                        <div class="message assistant">
-                            Hi! I'm Coach Scott's AI assistant. Ask me anything about my services, wellness, fitness, or nutrition!
-                        </div>
-                    </div>
-
-                    <div class="shortcut-dock" id="shortcut-dock">
-                        <div class="shortcut-dock-header">
-                            <div>
-                                <div class="shortcut-dock-title">Quick questions</div>
-                                <div class="shortcut-dock-hint">Visible by default, tucked away while typing</div>
-                            </div>
-                            <button class="shortcut-toggle" id="shortcut-toggle" type="button" onclick="toggleShortcuts()">Hide</button>
-                        </div>
-
-                        <div class="shortcut-list">
-                            <button type="button" onclick="askQuestion(this)">Am I fit enough for your classes?</button>
-                            <button type="button" onclick="askQuestion(this)">Why coaching AND training?</button>
-                            <button type="button" onclick="askQuestion(this)">What's the vibe like in your groups?</button>
-                            <button type="button" onclick="askQuestion(this)">How much is this going to cost me?</button>
-                            <button type="button" onclick="askQuestion(this)">What groups have free spots?</button>
-                            <button type="button" onclick="askQuestion(this)">What are the gym closure dates this year?</button>
-                        </div>
-                    </div>
-
-                    <div class="input-area">
-                        <input id="chat-input" type="text" placeholder="Type your message..." />
-                        <button class="send-button" onclick="sendMsg()">Send</button>
-                    </div>
-                </div>
+    <div class="chat-shell">
+        <div class="header">
+            <div class="header__avatar">
+                <img src="/scottlogo.png" alt="Scott Crawford">
             </div>
+            <div class="header__title">
+                <strong>Ask Scott</strong>
+                <span>AI Assistant · Crawford Coaching</span>
+            </div>
+            <div class="header__actions">
+                <a href="/" class="btn-sm">Back</a>
+                <button class="btn-sm" id="disclaimer-toggle" type="button">i</button>
+                <button class="btn-sm" id="clear-btn" type="button">Clear</button>
+            </div>
+        </div>
 
+        <div class="disclaimer" id="disclaimer">
+            <div class="disclaimer__inner">
+                <div class="disclaimer__label">About this assistant</div>
+                <p>AI-generated responses based on Scott's knowledge and services. Not a substitute for professional medical advice. Verify important details directly with Scott at <a href="mailto:scott@crawford-coaching.ca">scott@crawford-coaching.ca</a>.</p>
+            </div>
+        </div>
+
+        <div class="shortcuts" id="shortcuts">
+            <div class="shortcuts__label">Quick questions</div>
+            <div class="shortcuts__list" id="shortcuts-list"></div>
+        </div>
+
+        <div class="chat" id="chat-box"></div>
+
+        <div class="input-area">
+            <input id="chat-input" type="text" placeholder="Ask a question..." autocomplete="off">
+            <button class="send-btn" id="send-btn" type="button">Send</button>
         </div>
     </div>
 
     <script>
-        // Configuration
         const FUNCTION_URL = 'https://yxndmpwqvdatkujcukdv.supabase.co/functions/v1/faq-bot';
-        const STORAGE_KEY = 'coach_scott_chat_history';
-        const MAX_HISTORY = 20;
-        let shortcutsManuallyCollapsed = false;
+        const STORAGE_KEY  = 'crawford_chat_history';
+        const MAX_HISTORY  = 20;
+        const WELCOME      = "Hi \u2014 I'm Scott's AI assistant. Ask me anything about coaching, Synergize Fitness, the WHOLE Program, or general health and fitness.";
 
-        // Load history on startup
-        window.addEventListener('DOMContentLoaded', () => {
-            loadHistory();
-            const input = document.getElementById('chat-input');
-            input.focus();
-            attachShortcutDockBehavior(input);
-            updateShortcutDock();
+        const SHORTCUTS = [
+            "What is coaching, exactly?",
+            "Am I fit enough for Synergize?",
+            "What is the WHOLE Program?",
+            "What groups have free spots?",
+            "How much does coaching cost?",
+            "What\u2019s the difference between coaching and training?",
+            "Tell me your closure dates",
+        ];
+
+        const chatBox   = document.getElementById('chat-box');
+        const input     = document.getElementById('chat-input');
+        const sendBtn   = document.getElementById('send-btn');
+        const shortcuts = document.getElementById('shortcuts');
+
+        // Populate shortcuts
+        const list = document.getElementById('shortcuts-list');
+        SHORTCUTS.forEach(q => {
+            const btn = document.createElement('button');
+            btn.className = 'shortcut';
+            btn.textContent = q;
+            btn.onclick = () => ask(q);
+            list.appendChild(btn);
         });
 
-        // Enter key to send
-        document.getElementById('chat-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMsg();
-            }
-        });
+        // Load history
+        loadHistory();
+        input.focus();
 
+        // Events
+        sendBtn.addEventListener('click', send);
+        input.addEventListener('keypress', e => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+        });
+        input.addEventListener('focus', () => collapseShortcuts(true));
+        input.addEventListener('blur',  () => setTimeout(() => collapseShortcuts(false), 120));
+
+        document.getElementById('disclaimer-toggle').addEventListener('click', () => {
+            document.getElementById('disclaimer').classList.toggle('open');
+        });
+        document.getElementById('clear-btn').addEventListener('click', clearHistory);
+
+        // ─── Functions ───────────────────────
         function loadHistory() {
-            const chatBox = document.getElementById('chat-box');
             const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                const history = JSON.parse(stored);
-                if (history.length > 0) {
-                    chatBox.innerHTML = '';
-                    history.forEach(msg => appendMessageToUI(msg.content, msg.role));
-                }
-            }
+            if (!stored) { appendMsg(WELCOME, 'assistant'); return; }
+            const history = JSON.parse(stored);
+            if (history.length === 0) { appendMsg(WELCOME, 'assistant'); return; }
+            history.forEach(m => appendMsg(m.content, m.role));
         }
 
-        async function sendMsg() {
-            const chatInput = document.getElementById('chat-input');
-            const chatBox = document.getElementById('chat-box');
-            const sendButton = document.querySelector('.send-button');
-            const text = chatInput.value.trim();
-            
+        function collapseShortcuts(collapse) {
+            shortcuts.classList.toggle('hidden', collapse);
+        }
+
+        function clearHistory() {
+            localStorage.removeItem(STORAGE_KEY);
+            chatBox.innerHTML = '';
+            appendMsg(WELCOME, 'assistant');
+            shortcuts.classList.remove('hidden');
+        }
+
+        function ask(text) {
+            input.value = text;
+            send();
+        }
+
+        async function send() {
+            const text = input.value.trim();
             if (!text) return;
 
-            // Update UI & Local Storage
-            appendMessageToUI(text, 'user');
+            appendMsg(text, 'user');
             saveMessage(text, 'user');
-            
-            chatInput.value = '';
-            chatInput.disabled = true;
-            sendButton.disabled = true;
+            input.value = '';
+            input.disabled = true;
+            sendBtn.disabled = true;
+            collapseShortcuts(true);
 
-            // Show typing indicator
-            const loadingId = 'loading-' + Date.now();
-            const typingDiv = document.createElement('div');
-            typingDiv.id = loadingId;
-            typingDiv.className = 'typing-indicator';
-            typingDiv.textContent = 'Coach Scott Bot is typing...';
-            chatBox.appendChild(typingDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            const typing = document.createElement('div');
+            typing.className = 'typing';
+            typing.id = 'typing-indicator';
+            typing.innerHTML = '<span></span><span></span><span></span>';
+            chatBox.appendChild(typing);
+            scrollToBottom();
 
             try {
-                const history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                const history  = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
                 const messages = history.slice(-MAX_HISTORY);
-
                 const res = await fetch(FUNCTION_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ messages })
                 });
-
                 const data = await res.json();
-                
-                const loadingEl = document.getElementById(loadingId);
-                if (loadingEl) loadingEl.remove();
-
-                if (data.reply) {
-                    appendMessageToUI(data.reply, 'assistant');
-                    saveMessage(data.reply, 'assistant');
-                } else {
-                    appendMessageToUI("Sorry, I couldn't get a response.", 'assistant');
-                }
-
-            } catch (error) {
-                console.error('Error:', error);
-                const loadingEl = document.getElementById(loadingId);
-                if (loadingEl) loadingEl.remove();
-                appendMessageToUI("Sorry, something went wrong.", 'assistant');
+                document.getElementById('typing-indicator')?.remove();
+                appendMsg(data.reply || "Sorry, I couldn\u2019t get a response.", 'assistant');
+                if (data.reply) saveMessage(data.reply, 'assistant');
+            } catch (err) {
+                document.getElementById('typing-indicator')?.remove();
+                appendMsg("Something went wrong. Please try again.", 'assistant');
             } finally {
-                chatInput.disabled = false;
-                sendButton.disabled = false;
-                chatInput.focus();
-                updateShortcutDock(true);
+                input.disabled = false;
+                sendBtn.disabled = false;
+                input.focus();
             }
         }
 
@@ -534,75 +459,30 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
         }
 
-        function attachShortcutDockBehavior(input) {
-            input.addEventListener('focus', () => updateShortcutDock(true));
-            input.addEventListener('blur', () => {
-                setTimeout(() => updateShortcutDock(false), 120);
-            });
-            input.addEventListener('input', () => updateShortcutDock());
-        }
-
-        function toggleShortcuts() {
-            shortcutsManuallyCollapsed = !shortcutsManuallyCollapsed;
-            updateShortcutDock();
-        }
-
-        function updateShortcutDock(forceFocusState = null) {
-            const dock = document.getElementById('shortcut-dock');
-            const toggle = document.getElementById('shortcut-toggle');
-            const input = document.getElementById('chat-input');
-            const isFocused = forceFocusState !== null ? forceFocusState : document.activeElement === input;
-            const hasText = input.value.trim().length > 0;
-            const shouldCompact = shortcutsManuallyCollapsed || isFocused || hasText;
-
-            dock.classList.toggle('compact', shouldCompact);
-            toggle.textContent = shouldCompact ? 'Show' : 'Hide';
-        }
-
-        function askQuestion(btn) {
-            const input = document.getElementById('chat-input');
-            input.value = btn.textContent;
-            updateShortcutDock();
-            sendMsg();
-        }
-
-        function clearHistory() {
-            localStorage.removeItem(STORAGE_KEY);
-            const chatBox = document.getElementById('chat-box');
-            chatBox.innerHTML = '';
-            appendMessageToUI("Hi! I'm Coach Scott's AI assistant. Ask me anything about my services, wellness, fitness, or nutrition!", 'assistant');
+        function scrollToBottom() {
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
 
         function renderMarkdown(text) {
-            let escaped = text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;');
-
-            escaped = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-            escaped = escaped.replace(/\*(.+?)\*/g, '<em>$1</em>');
-            escaped = escaped.replace(/^- (.+)$/gm, '<li>$1</li>');
-            escaped = escaped.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
-            escaped = escaped.replace(/\n\n/g, '</p><p>');
-            escaped = `<p>${escaped}</p>`;
-            escaped = escaped.replace(/\n/g, '<br>');
-            escaped = escaped.replace(/<p><\/p>/g, '');
-            return escaped;
+            let out = text
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/^- (.+)$/gm, '<li>$1</li>')
+                .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>');
+            return `<p>${out}</p>`.replace(/<p><\/p>/g, '');
         }
 
-        function appendMessageToUI(text, sender) {
-            const chatBox = document.getElementById('chat-box');
+        function appendMsg(text, role) {
             const div = document.createElement('div');
-            div.className = `message ${sender}`;
-
-            if (sender === 'user') {
-                div.textContent = text;
-            } else {
-                div.innerHTML = renderMarkdown(text);
-            }
-
+            div.className = `msg ${role}`;
+            div.innerHTML = role === 'user'
+                ? text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                : renderMarkdown(text);
             chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            scrollToBottom();
         }
     </script>
 </body>

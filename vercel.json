@@ -1,6 +1,8 @@
 {
   "outputDirectory": "frontend",
   "routes": [
-    { "src": "/", "dest": "/chat.html" }
+    { "src": "/", "dest": "/chat.html" },
+    { "src": "/assistant", "dest": "/chat.html" },
+    { "src": "/chat", "dest": "/chat.html" }
   ]
 }
