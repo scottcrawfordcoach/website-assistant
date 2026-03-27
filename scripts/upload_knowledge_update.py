@@ -1,34 +1,42 @@
 import os
+from pathlib import Path
+
 import requests
 
-# Configuration
-SUPABASE_URL = "https://yxndmpwqvdatkujcukdv.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4bmRtcHdxdmRhdGt1amN1a2R2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDgwMDY5NSwiZXhwIjoyMDgwMzc2Njk1fQ.qqZ9FcIqAvjbTncKgRnt2SfcaoY0gFITvyPNFLZtvFM"
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 BUCKET_NAME = "website_assistant_knowledge"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+KNOWLEDGE_DIR = REPO_ROOT / "supabase" / "storage" / "website_assistant_knowledge"
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise SystemExit(
+        "Error: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in the environment."
+    )
 
 FILES_TO_UPLOAD = [
     {
-        "local_path": r"d:\Projects\Website Assistant\Coach-Scott-Bot\supabase\storage\website_assistant_knowledge\behavior.json",
+        "local_path": KNOWLEDGE_DIR / "behavior.json",
         "storage_path": "behavior.json",
         "content_type": "application/json"
     },
     {
-        "local_path": r"d:\Projects\Website Assistant\Coach-Scott-Bot\supabase\storage\website_assistant_knowledge\crawford-coaching-knowledge.md",
+        "local_path": KNOWLEDGE_DIR / "crawford-coaching-knowledge.md",
         "storage_path": "crawford-coaching-knowledge.md",
         "content_type": "text/markdown"
     },
     {
-        "local_path": r"d:\Projects\Website Assistant\Coach-Scott-Bot\supabase\storage\website_assistant_knowledge\class_availability.csv",
+        "local_path": KNOWLEDGE_DIR / "class_availability.csv",
         "storage_path": "class_availability.csv",
         "content_type": "text/csv"
     },
     {
-        "local_path": r"d:\Projects\Website Assistant\Coach-Scott-Bot\supabase\storage\website_assistant_knowledge\approved_sources.csv",
+        "local_path": KNOWLEDGE_DIR / "approved_sources.csv",
         "storage_path": "approved_sources.csv",
         "content_type": "text/csv"
     },
     {
-        "local_path": r"d:\Projects\Website Assistant\Coach-Scott-Bot\supabase\storage\website_assistant_knowledge\exercises.csv",
+        "local_path": KNOWLEDGE_DIR / "exercises.csv",
         "storage_path": "exercises.csv",
         "content_type": "text/csv"
     }
