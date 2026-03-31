@@ -338,6 +338,13 @@
   .ccw-msg.assistant ul { margin: 0.4rem 0 0.4rem 1rem; }
   .ccw-msg.assistant li { margin-bottom: 0.25rem; }
   .ccw-msg.assistant strong { color: #f5f3ef; font-weight: 400; }
+  .ccw-msg.assistant a {
+    color: #5eaee6;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    word-break: break-word;
+  }
+  .ccw-msg.assistant a:hover { color: #8ec8f0; }
 
   .ccw-typing {
     align-self: flex-start;
@@ -589,6 +596,8 @@
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
       .replace(/\*(.+?)\*/g,'<em>$1</em>')
+      .replace(/\[([^\]]+)\]\(((https?:\/\/|mailto:)[^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+      .replace(/(^|[^"'>])(https?:\/\/[^\s<)]+)/g,'$1<a href="$2" target="_blank" rel="noopener noreferrer">$2</a>')
       .replace(/^- (.+)$/gm,'<li>$1</li>')
       .replace(/(<li>.*<\/li>)/gs,'<ul>$1</ul>')
       .replace(/\n\n/g,'</p><p>')
