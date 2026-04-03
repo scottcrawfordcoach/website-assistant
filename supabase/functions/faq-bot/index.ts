@@ -1,4 +1,3 @@
-import { createClient } from '@supabase/supabase-js'
 import Anthropic from '@anthropic-ai/sdk'
 
 const corsHeaders = {
@@ -25,57 +24,44 @@ Deno.serve(async (req) => {
         throw new Error('No messages or query provided')
     }
 
-    // Initialize Supabase Client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
-
     // Initialize Anthropic Client
     const apiKey = Deno.env.get('ANTHROPIC_API_KEY')
     const anthropic = new Anthropic({
       apiKey: apiKey,
     })
 
-    // 1. Load Knowledge Files from Bucket
-    const bucketName = 'website_assistant_knowledge'
-    const { data: fileList, error: listError } = await supabase
-      .storage
-      .from(bucketName)
-      .list()
+    // 1. Load Knowledge Files via data-handler
+    const dataHandlerUrl = `${Deno.env.get('SUPABASE_URL')}/functions/v1/data-handler`
+    const dataHandlerToken = Deno.env.get('DATA_HANDLER_BEARER_TOKEN') ?? ''
 
-    if (listError) {
-      console.error('Error listing files:', listError)
-      throw new Error('Failed to load knowledge base')
+    const khRes = await fetch(dataHandlerUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${dataHandlerToken}`,
+      },
+      body: JSON.stringify({ action: 'knowledge_base_load', payload: {} }),
+    })
+
+    if (!khRes.ok) {
+      throw new Error(`Failed to load knowledge base: ${khRes.status}`)
     }
+
+    const { data: knowledgeFileList, error: khError } = await khRes.json()
+    if (khError) throw new Error(`Knowledge base error: ${khError}`)
 
     let knowledgeBaseText = ''
     let behaviorConfig = null;
 
-    // Filter for markdown, CSV, and JSON files
-    const allowedExtensions = ['.md', '.csv', '.json']
-    const knowledgeFiles = fileList.filter(f => allowedExtensions.some(ext => f.name.endsWith(ext)))
-    
-    for (const file of knowledgeFiles) {
-      const { data, error: downloadError } = await supabase
-        .storage
-        .from(bucketName)
-        .download(file.name)
-
-      if (downloadError) {
-        console.error(`Error downloading ${file.name}:`, downloadError)
-        continue
-      }
-
-      const text = await data.text()
-      
+    for (const file of knowledgeFileList) {
       if (file.name === 'behavior.json') {
         try {
-          behaviorConfig = JSON.parse(text);
+          behaviorConfig = JSON.parse(file.content);
         } catch (e) {
           console.error('Error parsing behavior.json:', e);
         }
       } else {
-        knowledgeBaseText += `\n\n--- Source: ${file.name} ---\n${text}`
+        knowledgeBaseText += `\n\n--- Source: ${file.name} ---\n${file.content}`
       }
     }
 

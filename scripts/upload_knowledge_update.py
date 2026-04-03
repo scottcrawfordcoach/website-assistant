@@ -1,17 +1,21 @@
+import base64
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 import requests
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-BUCKET_NAME = "website_assistant_knowledge"
+DATA_HANDLER_TOKEN = os.getenv("DATA_HANDLER_BEARER_TOKEN")
+DATA_HANDLER_URL = f"{SUPABASE_URL}/functions/v1/data-handler"
 REPO_ROOT = Path(__file__).resolve().parents[1]
 KNOWLEDGE_DIR = REPO_ROOT / "supabase" / "storage" / "website_assistant_knowledge"
 
-if not SUPABASE_URL or not SUPABASE_KEY:
+if not SUPABASE_URL or not DATA_HANDLER_TOKEN:
     raise SystemExit(
-        "Error: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in the environment."
+        "Error: SUPABASE_URL and DATA_HANDLER_BEARER_TOKEN must be set in the environment."
     )
 
 FILES_TO_UPLOAD = [
@@ -52,17 +56,23 @@ for file_info in FILES_TO_UPLOAD:
         continue
 
     with open(local_path, 'rb') as f:
-        file_content = f.read()
+        content_b64 = base64.b64encode(f.read()).decode('utf-8')
 
-    url = f"{SUPABASE_URL}/storage/v1/object/{BUCKET_NAME}/{storage_path}"
     headers = {
-        "Authorization": f"Bearer {SUPABASE_KEY}",
-        "Content-Type": content_type,
-        "x-upsert": "true"
+        "Authorization": f"Bearer {DATA_HANDLER_TOKEN}",
+        "Content-Type": "application/json",
+    }
+    body = {
+        "action": "knowledge_file_upload",
+        "payload": {
+            "name": storage_path,
+            "content_b64": content_b64,
+            "content_type": content_type,
+        }
     }
 
     print(f"Uploading {storage_path}...")
-    response = requests.post(url, data=file_content, headers=headers)
+    response = requests.post(DATA_HANDLER_URL, json=body, headers=headers)
 
     if response.status_code == 200:
         print(f"Successfully uploaded {storage_path}")
