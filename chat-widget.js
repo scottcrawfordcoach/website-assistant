@@ -262,7 +262,7 @@
   }
   .ccw-shortcuts-label:hover { color: #f5f3ef; }
   .ccw-shortcuts-label::after {
-    content: '\25B8';
+    content: '\\25B8';
     font-size: 0.58rem;
     letter-spacing: 0;
     transition: transform 0.2s;
