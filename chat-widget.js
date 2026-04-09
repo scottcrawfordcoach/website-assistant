@@ -241,19 +241,9 @@
 
   /* Shortcuts */
   .ccw-shortcuts {
-    padding: 0.7rem 1rem;
+    padding: 0.5rem 1rem;
     border-bottom: 1px solid rgba(255,255,255,0.06);
     flex-shrink: 0;
-    overflow: hidden;
-    max-height: 150px;
-    opacity: 1;
-    transition: max-height 0.22s ease, opacity 0.18s ease, padding 0.2s;
-  }
-  .ccw-shortcuts.hidden {
-    max-height: 0;
-    opacity: 0;
-    padding-top: 0;
-    padding-bottom: 0;
   }
   .ccw-shortcuts-label {
     font-size: 0.58rem;
@@ -261,12 +251,38 @@
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: #7a8fa3;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: color 0.2s;
   }
+  .ccw-shortcuts-label:hover { color: #f5f3ef; }
+  .ccw-shortcuts-label::after {
+    content: '\25B8';
+    font-size: 0.58rem;
+    letter-spacing: 0;
+    transition: transform 0.2s;
+  }
+  .ccw-shortcuts.expanded .ccw-shortcuts-label::after { transform: rotate(90deg); }
   .ccw-shortcuts-list {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.22s ease, opacity 0.18s ease, padding 0.2s;
+    padding-bottom: 0;
+  }
+  .ccw-shortcuts.expanded .ccw-shortcuts-list {
+    max-height: 150px;
+    opacity: 1;
+    padding-top: 0.5rem;
+    padding-bottom: 0.1rem;
   }
   .ccw-shortcut {
     font-family: 'Jost', sans-serif;
@@ -493,7 +509,9 @@
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ccwSend(); }
   });
   input.addEventListener('focus', () => ccwCollapseShortcuts(true));
-  input.addEventListener('blur', () => setTimeout(() => ccwCollapseShortcuts(false), 120));
+  document.getElementById('ccw-shortcuts').querySelector('.ccw-shortcuts-label').addEventListener('click', () => {
+    document.getElementById('ccw-shortcuts').classList.toggle('expanded');
+  });
 
   // ── FUNCTIONS ─────────────────────────────────────────────────
   window.ccwToggle = function() {
@@ -509,14 +527,13 @@
   };
 
   window.ccwCollapseShortcuts = function(collapse) {
-    document.getElementById('ccw-shortcuts').classList.toggle('hidden', collapse);
+    if (collapse) document.getElementById('ccw-shortcuts').classList.remove('expanded');
   };
 
   window.ccwClear = function() {
     localStorage.removeItem(STORAGE_KEY);
     document.getElementById('ccw-chat').innerHTML = '';
     ccwAppend(WELCOME, 'assistant');
-    document.getElementById('ccw-shortcuts').classList.remove('hidden');
   };
 
   function ccwLoadHistory() {

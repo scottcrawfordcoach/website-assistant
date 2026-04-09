@@ -140,19 +140,9 @@
 
         /* ─── SHORTCUTS ──────────────────── */
         .shortcuts {
-            padding: 0.8rem 1.4rem;
+            padding: 0.55rem 1.4rem;
             border-bottom: 1px solid rgba(255,255,255,0.06);
             flex-shrink: 0;
-            overflow: hidden;
-            max-height: 180px;
-            opacity: 1;
-            transition: max-height 0.22s ease, opacity 0.18s ease, padding 0.2s;
-        }
-        .shortcuts.hidden {
-            max-height: 0;
-            opacity: 0;
-            padding-top: 0;
-            padding-bottom: 0;
         }
         .shortcuts__label {
             font-size: 0.6rem;
@@ -160,12 +150,38 @@
             letter-spacing: 0.24em;
             text-transform: uppercase;
             color: var(--mist);
-            margin-bottom: 0.6rem;
+            margin-bottom: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: color 0.2s;
         }
+        .shortcuts__label:hover { color: var(--pale); }
+        .shortcuts__label::after {
+            content: '\25B8';
+            font-size: 0.6rem;
+            letter-spacing: 0;
+            transition: transform 0.2s;
+        }
+        .shortcuts.expanded .shortcuts__label::after { transform: rotate(90deg); }
         .shortcuts__list {
             display: flex;
             flex-wrap: wrap;
             gap: 0.45rem;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.22s ease, opacity 0.18s ease, padding 0.2s;
+            padding-bottom: 0;
+        }
+        .shortcuts.expanded .shortcuts__list {
+            max-height: 180px;
+            opacity: 1;
+            padding-top: 0.55rem;
+            padding-bottom: 0.1rem;
         }
         .shortcut {
             font-family: var(--sans);
@@ -381,7 +397,9 @@
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
         });
         input.addEventListener('focus', () => collapseShortcuts(true));
-        input.addEventListener('blur',  () => setTimeout(() => collapseShortcuts(false), 120));
+        shortcuts.querySelector('.shortcuts__label').addEventListener('click', () => {
+            shortcuts.classList.toggle('expanded');
+        });
 
         document.getElementById('disclaimer-toggle').addEventListener('click', () => {
             document.getElementById('disclaimer').classList.toggle('open');
@@ -398,14 +416,13 @@
         }
 
         function collapseShortcuts(collapse) {
-            shortcuts.classList.toggle('hidden', collapse);
+            if (collapse) shortcuts.classList.remove('expanded');
         }
 
         function clearHistory() {
             localStorage.removeItem(STORAGE_KEY);
             chatBox.innerHTML = '';
             appendMsg(WELCOME, 'assistant');
-            shortcuts.classList.remove('hidden');
         }
 
         function ask(text) {
