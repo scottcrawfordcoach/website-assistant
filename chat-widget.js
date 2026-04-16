@@ -9,6 +9,9 @@
   const STORAGE_KEY  = 'crawford_chat_history';
   const MAX_HISTORY  = 20;
   const WELCOME      = "Hi — I'm Scott's AI assistant. Ask me anything about coaching, Synergize Fitness, the WHOLE Program, or general health and fitness.";
+  const scriptEl = document.currentScript || Array.from(document.scripts).find(s => s.src && s.src.includes('chat-widget.js'));
+  const widgetAssetBase = scriptEl && scriptEl.src ? new URL('.', scriptEl.src).href : `${window.location.origin}/`;
+  const AVATAR_URL = `${widgetAssetBase}scottlogo.png`;
 
   const SHORTCUTS = [
     "What is coaching, exactly?",
@@ -436,7 +439,7 @@
   const html = `
   <button id="cc-widget-btn" onclick="ccwToggle()" aria-label="Ask Scott">
     <div class="cc-widget-avatar">
-      <img src="/scottlogo.png" alt="Scott Crawford">
+      <img src="${AVATAR_URL}" alt="Scott Crawford">
     </div>
     <div class="cc-widget-label">
       <span class="cc-widget-label-name">Ask Scott</span>
@@ -448,7 +451,7 @@
   <div id="cc-widget-panel" role="dialog" aria-label="Ask Scott assistant">
     <div class="ccw-header">
       <div class="ccw-avatar">
-        <img src="/scottlogo.png" alt="Scott Crawford">
+        <img src="${AVATAR_URL}" alt="Scott Crawford">
       </div>
       <div class="ccw-title">
         <strong>Ask Scott</strong>
